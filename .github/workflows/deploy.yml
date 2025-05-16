@@ -5,9 +5,53 @@ on:
     branches: [main]
 
 jobs:
+  jest-tests:
+    name: 🧪 Testes Unitários (Jest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📦 Instala dependências
+        run: npm install
+
+      - name: ✅ Roda testes unitários com Jest
+        run: npm test
+
+  cypress-tests:
+    name: 🧪 Testes E2E (Cypress)
+    runs-on: ubuntu-latest
+    needs: jest-tests
+
+    steps:
+      - name: ⬇️ Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📦 Instala dependências
+        run: npm install
+
+      - name: ✅ Roda Cypress E2E
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          wait-on: http://localhost:3000
+          wait-on-timeout: 60
+
   terraform:
     name: ⚙️ Provisiona Infraestrutura (Terraform)
     runs-on: ubuntu-latest
+    needs: cypress-tests
 
     steps:
       - name: ⬇️ Checkout do código
@@ -30,7 +74,7 @@ jobs:
 
       - name: 🔄 Deleta bucket existente (se existir)
         run: |
-          BUCKET_NAME="buscador-magic-video-bucket"
+          BUCKET_NAME="meu-site-magic-search"
           echo "Verificando se o bucket $BUCKET_NAME existe..."
           if aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
             echo "Bucket existe. Esvaziando e removendo bucket..."
@@ -76,8 +120,8 @@ jobs:
 
       - name: ☁️ Deploy para S3
         run: |
-          aws s3 sync ./out s3://buscador-magic-video-bucket --delete
+          aws s3 sync ./out s3://meu-site-magic-search --delete
 
       - name: 🌐 Exibe URL do site
         run: |
-          echo "Site disponível em: http://buscador-magic-video-bucket.s3-website-us-east-1.amazonaws.com"
+          echo "Site disponível em: http://meu-site-magic-search.s3-website-us-east-1.amazonaws.com"
