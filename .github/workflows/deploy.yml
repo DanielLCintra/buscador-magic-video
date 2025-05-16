@@ -1,0 +1,83 @@
+name: CI/CD - Testes e Deploy para S3
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  terraform:
+    name: ⚙️ Provisiona Infraestrutura (Terraform)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🔐 Configura credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: ⚙️ Instala Terraform
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common curl
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt-get update && sudo apt-get install terraform -y
+
+      - name: 🔄 Deleta bucket existente (se existir)
+        run: |
+          BUCKET_NAME="buscador-magic-video-bucket"
+          echo "Verificando se o bucket $BUCKET_NAME existe..."
+          if aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+            echo "Bucket existe. Esvaziando e removendo bucket..."
+            aws s3 rm s3://$BUCKET_NAME --recursive
+            aws s3api delete-bucket --bucket $BUCKET_NAME
+            echo "Aguardando propagação da exclusão..."
+            sleep 10
+          else
+            echo "Bucket $BUCKET_NAME não existe ou não é acessível."
+          fi
+
+      - name: 📦 Executa Terraform
+        working-directory: terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+  deploy:
+    name: 🚀 Deploy do Site para S3
+    runs-on: ubuntu-latest
+    needs: terraform
+
+    steps:
+      - name: ⬇️ Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📦 Instala dependências e gera build
+        run: |
+          npm install
+          npm run build
+
+      - name: 🔐 Configura credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: ☁️ Deploy para S3
+        run: |
+          aws s3 sync ./out s3://buscador-magic-video-bucket --delete
+
+      - name: 🌐 Exibe URL do site
+        run: |
+          echo "Site disponível em: http://buscador-magic-video-bucket.s3-website-us-east-1.amazonaws.com"
