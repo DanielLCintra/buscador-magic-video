@@ -74,7 +74,7 @@ jobs:
 
       - name: 🔄 Deleta bucket existente (se existir)
         run: |
-          BUCKET_NAME="buscador-magic-video-bucket"
+          BUCKET_NAME="buscador-magic.curso-webdev.com"
           echo "Verificando se o bucket $BUCKET_NAME existe..."
           if aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
             echo "Bucket existe. Esvaziando e removendo bucket..."
@@ -120,8 +120,8 @@ jobs:
 
       - name: ☁️ Deploy para S3
         run: |
-          aws s3 sync ./out s3://buscador-magic-video-bucket --delete
+          aws s3 sync ./out s3://buscador-magic.curso-webdev.com --delete
 
       - name: 🌐 Exibe URL do site
         run: |
-          echo "Site disponível em: http://buscador-magic-video-bucket.s3-website-us-east-1.amazonaws.com"
+          echo "Site disponível em: http://buscador-magic.curso-webdev.com.s3-website-us-east-1.amazonaws.com"
