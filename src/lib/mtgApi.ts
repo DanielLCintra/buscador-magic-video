@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card } from "@/types/Card";
+import { Card } from "../types/Card";
 
 async function fetchCards(query: string): Promise<Card[]> {
     if (!query) return [];
