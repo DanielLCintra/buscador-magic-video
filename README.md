@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Magic Search 🔍✨
 
-## Getting Started
+Aplicação desenvolvida com Next.js, estilizada com Tailwind CSS, testada com Jest e Cypress, e com componentes documentados via Storybook.
 
-First, run the development server:
-
+------------------------------------------------------------
+## 🚀 Scripts Disponíveis
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev           # Inicia o servidor Next.js em modo de desenvolvimento
+npm run build         # Gera a build de produção da aplicação
+npm run start         # Inicia o servidor da aplicação após a build
+npm run lint          # Executa o ESLint para verificar problemas de código
+npm run test          # Roda os testes unitários com Jest
+npm run storybook     # Abre o Storybook em http://localhost:6006
+npm run cypress:open  # Abre a interface do Cypress (modo interativo)
+npm run cypress:run   # Roda os testes e2e do Cypress em modo headless
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### IMPORTANTE:
+Para rodar os testes do Cypress (cypress:open ou cypress:run), 
+a aplicação Next.js PRECISA estar rodando em paralelo, 
+normalmente com o comando: npm run dev
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+------------------------------------------------------------
+## 📁 Estrutura do Projeto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+/components     -> Componentes reutilizáveis da aplicação
+/pages          -> Rotas do Next.js (formato pages/)
+/styles         -> Estilos globais (Tailwind e CSS)
+/types          -> Tipagens TypeScript personalizadas
+/cypress        -> Testes de ponta a ponta (E2E)
+/terraform          -> Arquivos de infraestrutura com Terraform (deploy no AWS S3)
 
-## Learn More
+------------------------------------------------------------
+## ✅ Tecnologias Utilizadas
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js
+- Tailwind CSS
+- TypeScript
+- Jest
+- Cypress
+- Storybook
+- AWS S3 + Terraform
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+------------------------------------------------------------
+## 🔗 Links Oficiais e Documentações
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Next.js
+#### - Instalação e primeiros passos:
+  https://nextjs.org/docs/app/getting-started/installation
 
-## Deploy on Vercel
+#### - Testes com Jest (App Router):
+  https://nextjs.org/docs/app/guides/testing/jest
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Testes com Cypress
+#### - Cypress com Next.js (Pages Router):
+  https://nextjs.org/docs/pages/guides/testing/cypress
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Storybook com Next.js
+#### - Guia oficial:
+  https://storybook.js.org/docs/get-started/frameworks/nextjs
+
+------------------------------------------------------------
+Feito com 💻 por Daniel Cintra
